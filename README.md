@@ -87,7 +87,7 @@ This repo is meant to be public, so personal data never enters tracked files.
 
 | Path | Holds | Tracked? |
 |---|---|---|
-| `my-plans/` | Your profile, plans and generated routines files | No (gitignored) |
+| `my-plans/` | Your living profile (`profile.md`), plans and generated routines files | No (gitignored) |
 | `my-data/` | Hevy catalog (including your custom exercises), training history, summary | No (gitignored) |
 | `.env` | Optional local API key | No (gitignored) |
 

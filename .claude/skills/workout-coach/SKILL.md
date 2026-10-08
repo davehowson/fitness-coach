@@ -14,6 +14,7 @@ This repo is public. Personal data must never reach it.
 - Write all generated output (plans, intake profiles, change notes) only under `my-plans/`, which is gitignored. Create it with `mkdir -p my-plans` if missing.
 - Before the first write, confirm `my-plans/` appears in `.gitignore` (`git check-ignore my-plans/`). If not, add it first.
 - One file per person/plan: `my-plans/<short-slug>-<YYYY-MM-DD>.md`, holding the profile (with `ASSUMED` markers) then the plan. Refinements edit that file and append a short dated change log.
+- **Living profile: `my-plans/profile.md`.** Every personal detail the user gives (intake answers, answers to any coach question, and anything volunteered: health, injuries, age, body stats, schedule, equipment, preferences, dislikes, history, feedback) goes into it immediately, in the same turn, as one short bullet under the matching heading, with the date. Newest value wins; note the change instead of deleting silently. Mark guesses `ASSUMED`. Create it if missing. Read it at the start of every session and before asking questions, so nothing already known is asked again. Plan files reference it rather than duplicating it.
 - Never write user details (health info, injuries, age, body stats, names, goals) into any tracked file: not `wiki/`, `research/`, this skill, commit messages, or examples. Do not copy user data into the wiki when giving feedback or "learning" from a session.
 - Never `git add`, commit or push anything from `my-plans/`.
 - Data pulled from a workout app (`my-data/`, see the `app-sync` skill) is equally private: read it, never copy it into tracked files.
@@ -29,11 +30,11 @@ When it ran:
 ## Phase 1: Gather user info
 
 1. Read `wiki/02-intake.md` (field table, question list, red flags, defaults).
-2. Check what the user already said. Skip anything answered.
+2. Read `my-plans/profile.md` and check what the user already said. Skip anything answered.
 3. Ask the missing questions in **one message**, using the copy-paste list in `wiki/02-intake.md`. At most ~8 questions; unanswered low-value fields get defaults.
 4. Hard-required: health screen, primary goal, days/week, minutes/session, equipment, injuries/pain. Never silently assume the health screen is "none".
 5. **Red flags** (table in `wiki/02-intake.md`): if any apply, do not build a hard program. Give the referral/clearance message from that page and stop.
-6. Echo back a short profile: understood inputs, experience classification (by progress speed), and every default marked `ASSUMED`. Then continue to Phase 2 unless the user's answers are contradictory.
+6. Save all answers to `my-plans/profile.md`, then echo back a short profile: understood inputs, experience classification (by progress speed), and every default marked `ASSUMED`. Then continue to Phase 2 unless the user's answers are contradictory.
 
 ## Phase 2: Build the plan
 
