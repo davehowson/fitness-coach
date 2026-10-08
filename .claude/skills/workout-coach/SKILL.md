@@ -71,7 +71,7 @@ Plain, actionable language. Evidence detail stays in the wiki; cite a page only 
 
 **Save the plan** (see Storage below) and show it in the conversation too.
 
-**App users:** also write `my-plans/<slug>-<date>.routines.json` in the schema from the `app-sync` skill (exact catalog titles, kg, rep ranges, rest, load notes from history). Do not publish yet; offer it after the user is happy with the plan (Phase 5).
+**App users:** also write `my-plans/<slug>-<date>.routines.json` in the schema from the `app-sync` skill (exact catalog titles, kg, rep ranges, rest, load notes from history). Do not publish, and do not run the publish command, until the user is happy with the plan and asks for it in the app (Phase 5). Offer it; do not assume it.
 
 End by inviting feedback: ask what feels too hard/easy, too long, disliked exercises, schedule fit.
 
@@ -99,4 +99,4 @@ After each change, update the saved plan file in place (see Storage), then:
 
 ## Phase 5: Publish to the app (optional, app users only)
 
-When the user approves the plan and wants it in their app, follow "Publish" in the `app-sync` skill: dry run, show what will be created, get an explicit yes (Hevy cannot delete), then `--apply`. After each later refinement (Phase 4) regenerate the routines file and re-publish with `--update`. Before a new block or a 4–8 week review, re-run `app-sync` so the next plan sees what they actually logged.
+**Never write to the user's app (Hevy) without their explicit approval of the exact workouts and destination.** A finished or "approved" plan is not permission to publish. Follow "Publish" in the `app-sync` skill step by step: list existing routines and folders, ask which folder to use, ask what to do with existing routines (leave, or archive them in the app themselves), dry-run, present the workouts clearly, ask if they want changes, loop until none, then get an explicit yes before `--apply --approve <code>`. After each later refinement (Phase 4) regenerate the routines file and repeat the whole sequence (re-publish uses `--update`, which needs its own yes). Before a new block or a 4-8 week review, re-run `app-sync` so the next plan sees what they actually logged.
