@@ -3,16 +3,20 @@
 
 Auth: HEVY_API_KEY env var (never written to disk). Private cache: my-data/hevy/ (gitignored).
 Writes (publish-routine, create-exercise) are dry-run unless --apply is passed; Hevy has no delete.
+A write also needs --approve CODE, the code printed by the dry run. Only pass it after the user has seen the
+preview and said yes to exactly that. publish-routine additionally needs an explicit folder choice
+(--folder NAME or --root); ask the user which, after running list-routines.
 
   hevy.py check
   hevy.py sync-catalog
   hevy.py sync-history [--full]
   hevy.py summary [--weeks 12]
   hevy.py resolve "bench press"...
-  hevy.py publish-routine plan.json [--apply] [--update]
-  hevy.py create-exercise --title T --type weight_reps --equipment barbell --muscle chest [--other triceps] [--apply]
+  hevy.py list-routines
+  hevy.py publish-routine plan.json (--folder NAME | --root) [--update] [--apply --approve CODE]
+  hevy.py create-exercise --title T --type weight_reps --equipment barbell --muscle chest [--other triceps] [--apply --approve CODE]
 """
-import argparse, difflib, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
+import argparse, difflib, hashlib, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -269,12 +273,69 @@ def build_routine(r, cat, folder_id):
     return {"title": r["title"], "folder_id": folder_id, "notes": r.get("notes"), "exercises": exs}
 
 
+def approval_code(obj):
+    """Short digest of exactly what a dry run previews; --apply must present it back."""
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, default=str).encode()).hexdigest()[:8]
+
+
+def require_approval(a, code):
+    if not a.approve:
+        die(f"--apply needs --approve {code}. Show the user the preview above, ask for an explicit yes, "
+            "then re-run with that code. Never approve on the user's behalf.")
+    if a.approve != code:
+        die(f"approval code {a.approve!r} does not match this preview ({code}). Something changed: "
+            "re-run without --apply, show the user the new preview and ask again.")
+
+
+def fmt_set(s):
+    if s.get("duration_seconds"):
+        core = f"{s['duration_seconds']}s"
+    elif s.get("rep_range"):
+        core = f"{s['rep_range']['start']}-{s['rep_range']['end']} reps"
+    else:
+        core = f"{s.get('reps')} reps"
+    w = s.get("weight_kg")
+    tag = {"warmup": " (warm-up)", "failure": " (to failure)", "dropset": " (drop set)"}.get(s["type"], "")
+    return core + (f" @ {w:g} kg" if w else "") + tag
+
+
+def render_routine(b, names):
+    lines = [f"  {b['title']}  [{b['_action']}]" + (f"  - {b['notes']}" if b.get("notes") else "")]
+    for e in b["exercises"]:
+        ss = f" [superset {e['superset_id']}]" if e.get("superset_id") is not None else ""
+        rest = f", rest {e['rest_seconds']}s" if e.get("rest_seconds") else ""
+        lines.append(f"    - {names.get(e['exercise_template_id'], e['exercise_template_id'])}{ss}{rest}")
+        lines.append(f"        {len(e['sets'])} sets: " + "; ".join(fmt_set(s) for s in e["sets"]))
+        if e.get("notes"):
+            lines.append(f"        note: {e['notes']}")
+    return "\n".join(lines)
+
+
+def cmd_list_routines(a):
+    """Read-only: folders and existing routines, so the user can choose where new ones go."""
+    folders = paginate("/v1/routine_folders", "routine_folders", 10)
+    routines = paginate("/v1/routines", "routines", 10)
+    by = defaultdict(list)
+    for r in routines:
+        by[r.get("folder_id")].append(r["title"])
+    print(f"{len(routines)} existing routine(s) in {len(folders)} folder(s)")
+    for fid, title in [(None, "My Routines (no folder)")] + [(f["id"], f["title"]) for f in folders]:
+        items = by.get(fid, [])
+        print(f"  {title}: {len(items)} routine(s)" + (": " + ", ".join(items[:8]) + (" ..." if len(items) > 8 else "") if items else ""))
+
+
 def cmd_publish(a):
+    if bool(a.folder) == bool(a.root):
+        die("choose the destination first: ask the user which Hevy folder to use (run list-routines to show them). "
+            "Pass --folder NAME (an existing folder, or a new name to create) or --root for 'My Routines'.")
     plan = json.loads(Path(a.plan).read_text())
+    if plan.get("folder"):
+        print(f"note: the plan file's 'folder' ({plan['folder']!r}) is ignored; the folder comes from --folder/--root.")
     cat = load(CATALOG, "catalog", "hevy.py sync-catalog")["exercises"]
+    names = {t["id"]: t["title"] for t in cat}
     existing = {x["title"].lower(): x for x in paginate("/v1/routines", "routines", 10)}
     folders = {f["title"].lower(): f for f in paginate("/v1/routine_folders", "routine_folders", 10)}
-    fname, folder_id, new_folder = plan.get("folder"), None, False
+    fname, folder_id, new_folder = a.folder, None, False
     if fname:
         if fname.lower() in folders:
             folder_id = folders[fname.lower()]["id"]
@@ -284,15 +345,24 @@ def cmd_publish(a):
     for b in built:
         dup = existing.get(b["title"].lower())
         if dup and not a.update:
-            die(f"routine {b['title']!r} already exists (id {dup['id']}). Re-run with --update to replace it, or rename.")
+            die(f"routine {b['title']!r} already exists (id {dup['id']}). Ask the user: rename the new one, or overwrite "
+                "it with --update (replaces its contents, cannot be undone).")
         b["_action"] = f"PUT {dup['id']}" if dup else "POST"
-    print(f"validated {len(built)} routine(s); folder: {fname or 'My Routines'}{' (will be created)' if new_folder else ''}")
+    dest = (f"folder {fname!r}" + (" (NEW, will be created)" if new_folder else " (existing)")) if fname else "My Routines (no folder)"
+    code = approval_code({"dest": dest, "routines": built})
+    print(f"WORKOUT PREVIEW: {len(built)} routine(s) -> {dest}")
     for b in built:
-        print(f"  {b['_action']}: {b['title']} ({len(b['exercises'])} exercises)")
+        print(render_routine(b, names))
+    if any(b["_action"] != "POST" for b in built):
+        print("  WARNING: PUT replaces an existing routine's contents; it stays in its current folder.")
+    if folder_id is not None:
+        n = sum(1 for x in existing.values() if x.get("folder_id") == folder_id)
+        if n:
+            print(f"  note: that folder already holds {n} routine(s); new ones are added next to them.")
     if not a.apply:
-        print(json.dumps({"routine": {k: v for k, v in built[0].items() if k != "_action"}}, indent=1)[:2500])
-        print("\nDRY RUN. Nothing sent. Add --apply to write to Hevy (cannot be undone from the API).")
+        print(f"\nDRY RUN. Nothing sent. Show this to the user, ask for changes, and only on an explicit yes re-run with: --apply --approve {code}")
         return
+    require_approval(a, code)
     if new_folder:
         folder_id = api("POST", "/v1/routine_folders", body={"routine_folder": {"title": fname}}).get("routine_folder", {}).get("id")
     for b in built:
@@ -328,9 +398,11 @@ def cmd_create_exercise(a):
             print(f"  {t['id']}  {t['title']}")
     if find_exact(a.title, cat):
         die("an exercise with this exact title already exists")
+    code = approval_code(body)
     if not a.apply:
-        print("DRY RUN. Custom exercises cannot be edited or deleted via the API. Add --apply to create.")
+        print(f"DRY RUN. Custom exercises cannot be edited or deleted via the API. Show the user, and only on an explicit yes re-run with: --apply --approve {code}")
         return
+    require_approval(a, code)
     r = api("POST", "/v1/exercise_templates", body=body)
     print(f"created {r.get('id')}; refreshing catalog")
     cmd_sync_catalog(a)
@@ -344,12 +416,17 @@ def main():
     s = sp.add_parser("sync-history"); s.add_argument("--full", action="store_true"); s.set_defaults(f=cmd_sync_history)
     s = sp.add_parser("summary"); s.add_argument("--weeks", type=int, default=12); s.set_defaults(f=cmd_summary)
     s = sp.add_parser("resolve"); s.add_argument("query", nargs="+"); s.set_defaults(f=cmd_resolve)
-    s = sp.add_parser("publish-routine"); s.add_argument("plan"); s.add_argument("--apply", action="store_true")
+    sp.add_parser("list-routines").set_defaults(f=cmd_list_routines)
+    s = sp.add_parser("publish-routine"); s.add_argument("plan")
+    s.add_argument("--folder", help="destination folder name (created if missing); ask the user")
+    s.add_argument("--root", action="store_true", help="no folder (My Routines); ask the user")
+    s.add_argument("--apply", action="store_true"); s.add_argument("--approve", help="code from the dry-run preview")
     s.add_argument("--update", action="store_true", help="PUT over routines whose title already exists"); s.set_defaults(f=cmd_publish)
     s = sp.add_parser("create-exercise")
     s.add_argument("--title", required=True); s.add_argument("--type", required=True)
     s.add_argument("--equipment", required=True); s.add_argument("--muscle", required=True)
-    s.add_argument("--other", nargs="*"); s.add_argument("--apply", action="store_true"); s.set_defaults(f=cmd_create_exercise)
+    s.add_argument("--other", nargs="*"); s.add_argument("--apply", action="store_true")
+    s.add_argument("--approve", help="code from the dry-run preview"); s.set_defaults(f=cmd_create_exercise)
     a = p.parse_args()
     try:
         a.f(a)

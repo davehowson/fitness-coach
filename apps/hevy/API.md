@@ -98,7 +98,6 @@ Workout { id, title, routine_id, description, start_time, end_time, updated_at, 
    gitignored `my-data/hevy/`, never in tracked files.
 3. **History is slow to pull**: 10 workouts per call and no date filter. Do one full pull, then use
    `/workouts/events?since=` for incremental refresh.
-4. **No undo.** Publishing defaults to dry-run, checks existing routine titles first, and uses `PUT` to revise
-   a routine instead of creating a second copy.
+4. **No undo, no approval bypass.** Publishing defaults to dry-run, needs an explicit folder choice, prints a full preview and an approval code, and `--apply` only works with that code after the user said yes. It checks existing routine titles first and uses `PUT` to revise a routine instead of creating a second copy. The API has no delete, archive or move: tidying existing routines is done by the user in the app.
 5. **Library names ≠ Hevy names.** The wiki says "back squat"; Hevy says `Squat (Barbell)`. A resolve step maps
    one to the other; if nothing fits, pick another exercise from the same pattern before creating a custom one.

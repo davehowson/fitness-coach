@@ -3,3 +3,7 @@ my-plans/
 
 # Private data pulled from workout apps (exercise catalogs incl. custom exercises, training history, summaries; never commit)
 my-data/
+
+# Local environment (holds HEVY_API_KEY; never commit)
+.env
+__pycache__/
