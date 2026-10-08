@@ -31,7 +31,19 @@ When it ran:
 
 1. Read `wiki/02-intake.md` (field table, question list, red flags, defaults).
 2. Read `my-plans/profile.md` and check what the user already said. Skip anything answered.
-3. Ask the missing questions in **one message**, using the copy-paste list in `wiki/02-intake.md`. At most ~8 questions; unanswered low-value fields get defaults.
+3. Ask the missing questions with the **AskUserQuestion tool**, never as a plain-text list. Take the content from the question list in `wiki/02-intake.md`. Rules:
+   - Max 4 questions per call, so use 2-3 calls in order: (1) safety, (2) goal + schedule + equipment, (3) background + preferences. Safety first; if a safety answer is a red flag, stop before asking more.
+   - Each question gets 2-4 concrete options with short descriptions (the tool adds "Other" for free text). Use `multiSelect: true` for non-exclusive things (conditions, equipment, dislikes).
+   - Put the likely option first. Pre-fill options from `my-data/hevy/summary.json` (e.g. days/week actually trained, typical minutes), marking it "(from your Hevy log)".
+   - Never offer a "none" option as a default silently chosen: the user must pick it.
+   - Skip anything already in `my-plans/profile.md`. Unanswered low-value fields get defaults marked `ASSUMED`.
+   - Same applies later: any clarifying question to the user in any phase uses AskUserQuestion, not prose.
+3b. **Returning user (profile already has a goal/plan): goal check-in before anything else.** Do not assume the stored goal still holds. Use AskUserQuestion (one call, max 4 questions), showing the stored goal as the first option:
+   - Goal now: keep current goal, or switch (strength, muscle, fat loss, general fitness, endurance, athletic, mix)? Any new secondary goal, priority muscle or event/date?
+   - Expectations: what outcome by when counts as success (e.g. a number, a look, a performance, a habit)? Compare against wiki realistic rates; if unrealistic, say so with the wiki figure and offer an adjusted target.
+   - What changed since last block: schedule, session length, equipment, pain/injury, sleep/stress (multiSelect).
+   - Last block verdict: what worked, what to drop (multiSelect: too hard, too easy, too long, boring exercises, hard to stick to).
+   Save answers to `my-plans/profile.md` (dated, newest wins, note changes) before planning. A changed goal restarts at Phase 2 goal step. Then ask only the intake fields still missing or stale (review items: pain, sleep, stress, deficit, adherence, schedule). If the user answered the full intake in this same session already, skip the check-in.
 4. Hard-required: health screen, primary goal, days/week, minutes/session, equipment, injuries/pain. Never silently assume the health screen is "none".
 5. **Red flags** (table in `wiki/02-intake.md`): if any apply, do not build a hard program. Give the referral/clearance message from that page and stop.
 6. Save all answers to `my-plans/profile.md`, then echo back a short profile: understood inputs, experience classification (by progress speed), and every default marked `ASSUMED`. Then continue to Phase 2 unless the user's answers are contradictory.
