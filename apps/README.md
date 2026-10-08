@@ -12,6 +12,7 @@ Supported apps: **Hevy** (`apps/hevy/API.md` has the API contract and its limits
 
 Rules for every adapter:
 - Credentials come from environment variables, never from files in this repo.
+- Enable the guard once per clone: `git config core.hooksPath .githooks` (CI also runs `scripts/check-no-private-paths.sh --tree`).
 - Everything fetched from the user's account goes under `my-data/` (gitignored). Nothing personal in tracked files.
 - Writes are dry-run by default and validated against the cached catalog before anything is sent.
 - Stdlib-only Python so it runs anywhere without installs.

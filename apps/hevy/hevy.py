@@ -17,9 +17,9 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-BASE = os.environ.get("HEVY_BASE_URL", "https://api.hevyapp.com").rstrip("/")
+BASE = "https://api.hevyapp.com"  # fixed: the api-key header must never go to another host
 ROOT = Path(__file__).resolve().parents[2]
-DATA = Path(os.environ.get("FITNESS_COACH_DATA", ROOT / "my-data")) / "hevy"
+DATA = ROOT / "my-data" / "hevy"  # gitignored; no override so data cannot land in a tracked path
 CATALOG, HISTORY, SUMMARY = DATA / "catalog.json", DATA / "history.json", DATA / "summary.json"
 
 TYPES = {"weight_reps", "reps_only", "bodyweight_reps", "bodyweight_assisted_reps", "duration",
