@@ -16,6 +16,15 @@ This repo is public. Personal data must never reach it.
 - One file per person/plan: `my-plans/<short-slug>-<YYYY-MM-DD>.md`, holding the profile (with `ASSUMED` markers) then the plan. Refinements edit that file and append a short dated change log.
 - Never write user details (health info, injuries, age, body stats, names, goals) into any tracked file: not `wiki/`, `research/`, this skill, commit messages, or examples. Do not copy user data into the wiki when giving feedback or "learning" from a session.
 - Never `git add`, commit or push anything from `my-plans/`.
+- Data pulled from a workout app (`my-data/`, see the `app-sync` skill) is equally private: read it, never copy it into tracked files.
+
+## Phase 0: App pre-flight (only if the user logs in a supported app)
+
+Supported: Hevy. If the user uses it (or wants routines created there), run the `app-sync` skill **first**, before intake, so you know the exercise pool and their real training history. If they use no app, skip this phase entirely.
+
+When it ran:
+- **Exercise pool = `my-data/hevy/catalog.json`.** Hevy routines can only reference exercises that exist in the app (built-in or the user's custom ones), so Phase 2 picks from the wiki library by pattern, then maps each pick to a catalog title (`python3 apps/hevy/hevy.py resolve "<name>"`). Prefer exact catalog titles and the user's custom exercises when they match the pattern. If no catalog exercise fits a slot, use a same-pattern substitute from the wiki, not a custom exercise.
+- **History = `my-data/hevy/summary.json`.** Use it to pre-fill intake (days/week actually trained, typical session length, experience from progress speed, equipment they really use) and ask only what is still missing. Use it in Phase 2: compare current weekly sets per muscle with the targets, start loads from last top sets / e1RM (convert nothing; Hevy weights are kg), keep exercises they already progress on for main lifts, and don't jump volume more than the progression rules allow. Past data informs the plan; the red-flag screen and the user's stated goal still decide it.
 
 ## Phase 1: Gather user info
 
@@ -43,7 +52,7 @@ Follow `wiki/00-workflow.md` Steps 2–7 in order. Read each page it names as yo
 Rules:
 - Decide in order: goal → week → volume → sessions → progression. Build from weekly sets per muscle, not exercises first.
 - One primary goal. Secondary goals get maintenance-to-moderate dose.
-- Use exercises from the library, filtered by equipment, skill and injuries; use its substitutes.
+- Use exercises from the library, filtered by equipment, skill and injuries; use its substitutes. With an app catalog (Phase 0), every exercise must also exist in the catalog.
 - State a progression rule and deload rule. Name the template if one is adapted.
 - Run `wiki/14-quality-checklist.md`. Fix every failed item before presenting. Never present a plan failing a safety item.
 
@@ -61,6 +70,8 @@ Order per `wiki/00-workflow.md` Step 8:
 Plain, actionable language. Evidence detail stays in the wiki; cite a page only if the user asks why.
 
 **Save the plan** (see Storage below) and show it in the conversation too.
+
+**App users:** also write `my-plans/<slug>-<date>.routines.json` in the schema from the `app-sync` skill (exact catalog titles, kg, rep ranges, rest, load notes from history). Do not publish yet; offer it after the user is happy with the plan (Phase 5).
 
 End by inviting feedback: ask what feels too hard/easy, too long, disliked exercises, schedule fit.
 
@@ -85,3 +96,7 @@ After each change, update the saved plan file in place (see Storage), then:
 - Show what changed and why in 1–3 lines, then the updated plan (or only the changed sessions if the plan is long).
 - If feedback conflicts with the wiki (e.g. "toning" rep ranges, cycle-based programming), say what the wiki recommends and why, offer the closest adherence-friendly option. When two options are close, adherence decides.
 - Loop until the user is happy. Re-ask intake review items (pain, sleep, stress, adherence, schedule) at each 4–8 week review.
+
+## Phase 5: Publish to the app (optional, app users only)
+
+When the user approves the plan and wants it in their app, follow "Publish" in the `app-sync` skill: dry run, show what will be created, get an explicit yes (Hevy cannot delete), then `--apply`. After each later refinement (Phase 4) regenerate the routines file and re-publish with `--update`. Before a new block or a 4–8 week review, re-run `app-sync` so the next plan sees what they actually logged.
