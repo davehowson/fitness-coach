@@ -77,7 +77,7 @@ Rules from the arithmetic:
 - **Cardio:** Wed/Sat Z2 or long Z2 Sunday. Keep intervals ≥24 h from FB days.
 
 ### 3 days
-- **Ranked options:** (1) FB A/B/A (alternate weeks B/A/B); (2) U/L/FB (intermediate, hypertrophy); (3) PPL once (1×; lowest rank, preference only).
+- **Ranked options:** (1) FB A/B/A (alternate weeks B/A/B); (2) U/L/FB (intermediate, hypertrophy); (3) PPL once (1×; lowest rank, preference only). **If the person rejects full body** and has only 3 days: (E) alternating U/L (week 1 U-L-U, week 2 L-U-L, ≈1.5×/muscle) or L/U/L (legs 2×, upper 1×, when legs/squat are the priority); PPL once last. Do not add a 4th day they did not offer. (Practitioner; web check 2026-10-10 in `research/04-web-findings-log.md`: at equal weekly sets frequency has little effect, no head-to-head split trials.)
 - **Frequency:** FB 3×; U/L/FB ≈2× (FB gives the third exposure to each); PPL 1×. **Arithmetic (FB×3):** Beginner 8 → ≈3/session; intermediate 12 → 4/session; advanced 16 → ≈5/session (hard to fit; cap ≈12–14 on 3 d, or go to 4 d). Strength 6 → 2/session per lift-muscle.
 - **Calendars:**
 
@@ -87,6 +87,7 @@ Rules from the arithmetic:
 | B: U/L/FB | U | R | L | R | FB | Z2 | R |
 | C: FB + cardio | FB | Z2 | FB | R | FB | Z2 (long) | R |
 | D: PPL once | Pu | R | Pl | R | Lg | R | R |
+| E: alternating U/L (no full body) | U / L (wk 2) | R or Z2 | L / U (wk 2) | R | U / L (wk 2) | R | R |
 
 - **By goal:** strength → FB×3 with heavy / light / medium days of the main lift (2–3×/lift). Hypertrophy → U/L/FB or FB with exercise variation per day. General fitness → FB×3 + 2 cardio days. Fat loss → FB×3 + Z2/steps on off days; keep protein/loading. Hybrid → 3 lift + 2 cardio (Option C); see [hybrid](10-hybrid.md).
 - **Cardio:** 2 non-lifting days Z2; optional ≤10 min finisher after lifting. Do not place intervals the day before FB with squats/deadlifts.

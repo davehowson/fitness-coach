@@ -59,4 +59,4 @@ For most people, the **main lever is weekly hard sets per muscle**. Frequency, s
 ## Provenance
 
 Research process, raw findings, verification and binding defaults are in `../research/`:
-`00-orchestration-log.md` (what was done), `raw/` (topic research with sources), `raw/12-*` and `raw/13-*` (verification), `03-canonical-defaults.md` (resolved numbers).
+`04-web-findings-log.md` (later web lookups, dated, with what each changed in the wiki), `00-orchestration-log.md` (what was done), `raw/` (topic research with sources), `raw/12-*` and `raw/13-*` (verification), `03-canonical-defaults.md` (resolved numbers).

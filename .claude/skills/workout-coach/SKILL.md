@@ -5,7 +5,9 @@ description: Design an evidence-based workout plan from the repo's wiki, then re
 
 # Workout Coach
 
-Build a plan from `wiki/`, not from memory. The wiki is the source of truth; where it disagrees with general knowledge, the wiki wins. Do no web research. Paths below are relative to the repo root.
+Build a plan from `wiki/`, not from memory. The wiki is the source of truth; where it disagrees with general knowledge, the wiki wins. Check `research/04-web-findings-log.md` before recommending anything the wiki leaves open. Web research only when the user asks or the wiki has a real gap. Paths below are relative to the repo root.
+
+**Every web lookup is stored in the same turn** (generic evidence only, never user data): append a dated entry to `research/04-web-findings-log.md` (question, source URLs, findings, grade, what it overturned) and fold the result into the relevant `wiki/` page so the next plan does not repeat outdated advice. Never answer a "why" or a split/volume/frequency question from memory when the wiki or log already covers it. Never add training days the user did not offer.
 
 ## Storage and privacy (applies to every phase)
 

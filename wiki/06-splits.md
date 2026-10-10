@@ -11,7 +11,7 @@
 3. **Weekly set targets (hard sets/muscle):** beginner hypertrophy 8, intermediate 12, advanced/priority 16 (range 12–20, ≤~22 short-term specialization), max strength 6 (2–3 sets × 2–3 sessions), maintenance 4–6, minimum useful ≥1 hard set per major pattern on ≥2 d/wk. Fractional counting: direct = 1, indirect = 0.5.
 4. **Per-session soft cap: 10 fractional hard sets per muscle (≈6–8 direct).** If the weekly target needs more, add a session for that muscle. Sets/session = weekly target ÷ frequency. (Contested: the cap derives from a preprint's "point of undetectable further benefit", not a proven ceiling [7].)
 5. **Choose by: (a) days/week the person will keep, (b) frequency ≥2×, (c) session length, (d) recovery, (e) preference. Adherence breaks ties.** Honor a stated split preference if weekly sets and frequency are acceptable.
-6. **Default map:** 1–3 d → full body; 4 d → upper/lower; 5 d → ULPPL (or PHAT-style, advanced); 6 d → PPL×2 (Arnold only if very high tolerance); body-part (1×) only for preference/specialization, with a second hit on lagging muscles. Details per day count: [weekly planning](07-weekly-planning.md).
+6. **Default map:** 1–3 d → full body (if the person dislikes full body at 3 d: alternating upper/lower, ≈1.5×/muscle, or lower/upper/lower; never add a day they did not offer); 4 d → upper/lower; 5 d → ULPPL (or PHAT-style, advanced); 6 d → PPL×2 (Arnold only if very high tolerance); body-part (1×) only for preference/specialization, with a second hit on lagging muscles. Details per day count: [weekly planning](07-weekly-planning.md).
 7. Beginners: full body 2–3×/week. Never prescribe bro split, Arnold or PHAT to a beginner.
 8. Leave ≥1 rest day (or a non-overlapping day) between sessions hitting the same muscle hard (~48 h, ACSM 2009 [11]).
 9. Irregular life → **rolling** schedule (next workout in sequence regardless of weekday). Stable life → fixed calendar.
@@ -215,7 +215,7 @@ Evidence: no trials compare rolling vs fixed adherence (Practitioner; rolling PP
 - **Per-session cap** is Contested (preprint [7]); weekly volume matters more than session distribution once frequency ≥2.
 - **Named splits** (PPL, Arnold, PHUL, PHAT, TL, AP): no head-to-head trials; rationale is scheduling/fatigue overlap. Practitioner [17][18][19][20].
 - **Unverified**: PHUL/PHAT original specifications; Arnold's actual routine; secondary-source set counts.
-- **Not found**: peer-reviewed PPL vs UL, TL or AP comparison; rolling vs fixed adherence trials.
+- **Not found**: peer-reviewed PPL vs UL, TL or AP comparison; rolling vs fixed adherence trials. Re-checked online 2026-10-10: still none; frequency effect at equal volume remains negligible (see `research/04-web-findings-log.md`).
 
 ## Sources
 
