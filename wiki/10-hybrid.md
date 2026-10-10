@@ -84,6 +84,8 @@ Legend: **S** = strength session, **S-low/S-up** = lower/upper emphasis, **Z2** 
 
 3 days cannot maximise both qualities; say so to the user.
 
+Web check 2026-10-10 (`research/04-web-findings-log.md`, `Practitioner`, commercial sources, no peer-reviewed minimum found): 3 lifting days is the usual recommendation for lifters who also run; 2 lifting days work if full body and away from hard runs. A lifter with 3 gym days + 1 easy run needs no extra lifting day.
+
 ### 3 days
 
 | Priority | Mon | Tue | Wed | Thu | Fri | Sat | Sun |
